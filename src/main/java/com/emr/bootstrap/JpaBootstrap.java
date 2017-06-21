@@ -53,7 +53,7 @@ public class JpaBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
         patient1.setPatientName("Jim Cary");
         patient1.setPracticeName("XYZ Practice");
-        patient1.setFileUrl("https://springframework.guru/wp-content/uploads/2015/04/spring_framework_guru_shirt-rf412049699c14ba5b68bb1c09182bfa2_8nax2_512.jpg");
+        patient1.setFileUrl("https://abc.com");
         //patient1.getFileUrl().getBinaryStream(new File("emrs/test.pdf"));
        // patient1.setFileUrl(new File("emrs/test.pdf"));
 
@@ -65,7 +65,7 @@ public class JpaBootstrap implements ApplicationListener<ContextRefreshedEvent> 
         Patient patient2 = new Patient();
         patient2.setPatientName("Will Smith");
         patient2.setPracticeName("ABC Practice");
-        patient2.setFileUrl("https://springframework.guru/wp-content/uploads/2015/04/spring_framework_guru_coffee_mug-r11e7694903c348e1a667dfd2f1474d95_x7j54_8byvr_512.jpg");
+        patient2.setFileUrl("https://abc.com");
         patient2.setPatientId("16863939");
         patientRepository.save(patient2);
 
