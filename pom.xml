@@ -62,15 +62,15 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.db4o</groupId>
-			<artifactId>db4o-full-java5</artifactId>
-		</dependency>
-	<!--	<dependency>
-			<groupId>db4o-full-java5:8.1-SNAPSHOT</groupId>
-			<artifactId>db4o-full-java5</artifactId>
-			<version>8.1-SNAPSHOT</version>
-		</dependency> -->
+		<!--	<dependency>
+                <groupId>com.db4o</groupId>
+                <artifactId>db4o-full-java5</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>db4o-full-java5:8.1-SNAPSHOT</groupId>
+                <artifactId>db4o-full-java5</artifactId>
+                <version>8.1-SNAPSHOT</version>
+            </dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
