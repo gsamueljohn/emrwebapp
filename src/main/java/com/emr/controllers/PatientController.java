@@ -3,11 +3,20 @@ package com.emr.controllers;
 import com.emr.domain.Patient;
 import com.emr.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Controller
 public class PatientController {
@@ -58,6 +67,50 @@ public class PatientController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(){
          return "login";
+    }
+
+    @RequestMapping(value="patient/getMedicalRecord/{id}", method=RequestMethod.GET)
+    public ResponseEntity<byte[]> getMedicalRecord(@PathVariable Integer id) throws IOException {
+
+        Patient patient = patientService.getPatientById(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=" + patient.getPracticeName());
+        //headers.setContentDispositionFormData(filename, filename);
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(loadFile(patient.getFileUrl()), headers, HttpStatus.OK);
+        return response;
+    }
+
+    private byte[] readFully(InputStream stream) throws IOException
+    {
+        byte[] buffer = new byte[8192];
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int bytesRead;
+        while ((bytesRead = stream.read(buffer)) != -1)
+        {
+            baos.write(buffer, 0, bytesRead);
+        }
+        return baos.toByteArray();
+    }
+
+    private byte[] loadFile(String sourcePath) throws IOException
+    {
+        InputStream inputStream = null;
+        try
+        {
+            inputStream = new FileInputStream(sourcePath);
+            return readFully(inputStream);
+        }
+        finally
+        {
+            if (inputStream != null)
+            {
+                inputStream.close();
+            }
+        }
     }
 
 }

@@ -53,11 +53,12 @@ public class JpaBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
         patient1.setPatientName("Jim Cary");
         patient1.setPracticeName("XYZ Practice");
-        patient1.setFileUrl("https://abc.com");
+        patient1.setPatientId("123456");
+        patient1.setFileUrl(getFileURL(patient1));
         //patient1.getFileUrl().getBinaryStream(new File("emrs/test.pdf"));
        // patient1.setFileUrl(new File("emrs/test.pdf"));
 
-        patient1.setPatientId("123456");
+
         patientRepository.save(patient1);
 
         log.info("Saved Jim Cary - id: " + patient1.getId());
@@ -65,11 +66,17 @@ public class JpaBootstrap implements ApplicationListener<ContextRefreshedEvent> 
         Patient patient2 = new Patient();
         patient2.setPatientName("Will Smith");
         patient2.setPracticeName("ABC Practice");
-        patient2.setFileUrl("https://abc.com");
         patient2.setPatientId("16863939");
+        patient2.setFileUrl(getFileURL(patient2));
         patientRepository.save(patient2);
 
         log.info("Saved Will Smith - id:" + patient2.getId());
+    }
+
+    private String getFileURL(Patient patient) {
+        return "emrs/" + patient.getPatientId() + "/"
+                + patient.getPracticeName() + "/"
+                + patient.getPatientId() + "-" + patient.getPracticeName()+".pdf";
     }
 
     private void loadUsers() {
