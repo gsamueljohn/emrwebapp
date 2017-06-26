@@ -2,6 +2,8 @@ package com.emr.controllers;
 
 import com.emr.domain.Patient;
 import com.emr.services.PatientService;
+import com.emr.util.CryptoException;
+import com.emr.util.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,10 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 @Controller
 public class PatientController {
@@ -79,11 +78,42 @@ public class PatientController {
         headers.add("content-disposition", "inline;filename=" + patient.getPracticeName());
         //headers.setContentDispositionFormData(filename, filename);
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(loadFile(patient.getFileUrl()), headers, HttpStatus.OK);
+        //ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(loadFile(patient.getFileUrl()), headers, HttpStatus.OK);
+        ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(getJasyptDecryptedFile(patient.getFileUrl()), headers, HttpStatus.OK);
         return response;
     }
 
-    private byte[] readFully(InputStream stream) throws IOException
+    private byte[] getJasyptDecryptedFile(String fileURL) {
+        try {
+            return CryptoUtils.jasyptDecrypt(fileURL);
+        } catch (CryptoException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private byte[] getDecryptedFile(String fileURL) {
+        String key = "Mary has one cat";
+        //File inputFile = new File("emrs/123456/XYZ Practice/123456-XYZ Practice.pdf");
+        File encryptedFile = new File(fileURL);
+        //File decryptedFile = new File("document.decrypted");
+
+        try {
+            //CryptoUtils.encrypt(key, inputFile, encryptedFile);
+            return CryptoUtils.decrypt(key, encryptedFile);
+        } catch (CryptoException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
+
+    /*private byte[] readFully(InputStream stream) throws IOException
     {
         byte[] buffer = new byte[8192];
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -111,6 +141,6 @@ public class PatientController {
                 inputStream.close();
             }
         }
-    }
+    }*/
 
 }

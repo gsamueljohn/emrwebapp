@@ -6,12 +6,15 @@ import com.emr.domain.User;
 import com.emr.repositories.PatientRepository;
 import com.emr.services.RoleService;
 import com.emr.services.UserService;
+import com.emr.util.CryptoException;
+import com.emr.util.CryptoUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -41,11 +44,50 @@ public class JpaBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        //encryptFiles();
+        jasyptEncryptFiles();
         loadPatients();
         loadUsers();
         loadRoles();
         assignUsersToUserRole();
         assignUsersToAdminRole();
+    }
+
+    private void jasyptEncryptFiles() {
+
+        String sourcePath1 = "emrs/123456/XYZ Practice/123456-XYZ Practice.pdf";
+        String encryptedFilePath1 = "emrs/123456/XYZ Practice/123456-XYZ Practice-enc.pdf";
+
+        String sourcePath2 = "emrs/16863939/ABC Practice/16863939-ABC Practice.pdf";
+        String encryptedFilePath2 = "emrs/16863939/ABC Practice/16863939-ABC Practice-enc.pdf";
+
+        try {
+            CryptoUtils.jasyptEncrypt(sourcePath1, encryptedFilePath1);
+            CryptoUtils.jasyptEncrypt(sourcePath2, encryptedFilePath2);
+        } catch (CryptoException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void encryptFiles() {
+
+        String key = "Mary has one cat";
+        File inputFile1 = new File("emrs/123456/XYZ Practice/123456-XYZ Practice.pdf");
+        File encryptedFile1 = new File("emrs/123456/XYZ Practice/123456-XYZ Practice-enc.pdf");
+
+        File inputFile2 = new File("emrs/16863939/ABC Practice/16863939-ABC Practice.pdf");
+        File encryptedFile2 = new File("emrs/16863939/ABC Practice/16863939-ABC Practice-enc.pdf");
+
+        try {
+            CryptoUtils.encrypt(key, inputFile1, encryptedFile1);
+            CryptoUtils.encrypt(key, inputFile2, encryptedFile2);
+        } catch (CryptoException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 
     private void loadPatients() {
@@ -76,7 +118,7 @@ public class JpaBootstrap implements ApplicationListener<ContextRefreshedEvent> 
     private String getFileURL(Patient patient) {
         return "emrs/" + patient.getPatientId() + "/"
                 + patient.getPracticeName() + "/"
-                + patient.getPatientId() + "-" + patient.getPracticeName()+".pdf";
+                + patient.getPatientId() + "-" + patient.getPracticeName()+"-enc.pdf";
     }
 
     private void loadUsers() {
